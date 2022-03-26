@@ -1,7 +1,8 @@
 #### Purpose:
 Demonstrate simple Client and Server communication using `SocketServer` and `Socket`classes.
 
-Here a simple protocol is defined which uses protobuf. The client reads in a json file and then creates a protobuf object from it to send it to the server. The server reads it and sends back the calculated result. 
+Here a simple protocol is defined which uses protobuf. The client reads in a json file and then creates a protobuf object from it to send it 
+to the server. The server reads it and sends back the calculated result. 
 
 The response is also a protobuf but only with a result string. 
 

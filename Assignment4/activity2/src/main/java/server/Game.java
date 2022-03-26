@@ -1,4 +1,4 @@
-package src.main.java.server;
+package activity2.src.main.java.server;
 import java.util.Scanner;
 import java.util.*; 
 import java.io.*;

@@ -1,4 +1,4 @@
-package src.main.java.client;
+package activity2.src.main.java.client;
 
 import java.net.*;
 import java.io.*;

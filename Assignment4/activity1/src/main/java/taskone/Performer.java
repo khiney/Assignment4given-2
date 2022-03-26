@@ -61,6 +61,9 @@ class Performer {
    
                 int choice = message.getInt("selected");
                     switch (choice) {
+                        case (0):
+                            quit=true;
+                            break;
                         case (1):
                             String inStr = (String) message.get("data");
                             returnMessage = add(inStr);
