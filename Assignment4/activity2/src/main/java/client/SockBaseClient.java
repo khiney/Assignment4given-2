@@ -22,6 +22,7 @@ class SockBaseClient {
         int port = 9099; // default port
         boolean greet = true;
         boolean userChoice = false;
+        boolean playGame = false;
 
         // Make sure two arguments are given
         if (args.length != 2) {
@@ -99,8 +100,14 @@ class SockBaseClient {
                         response = Response.parseDelimitedFrom(in);
 
                         // print the server response.
-                        System.out.println(response.getImage());
-                        System.out.println(response.getTask());
+                        if(response.hasMessage()){              // in case there's an error
+                            System.out.println(response.getMessage());
+                        }else{
+                            System.out.println(response.getImage());
+                            System.out.println(response.getTask());
+                            playGame = true;
+                            userChoice = false;
+                        }
                     }else if(strToSend.equalsIgnoreCase("3")){
                         Request op = Request.newBuilder()
                                 .setOperationType(Request.OperationType.QUIT)
@@ -117,6 +124,45 @@ class SockBaseClient {
                         // print the server response.
                         System.out.println(response.getImage());
                         System.out.println(response.getTask());
+                    }
+
+
+                }else if(playGame){
+                    Request op = Request.newBuilder()
+                            .setOperationType(Request.OperationType.ROWCOL)
+                            .setRow(Character.getNumericValue(strToSend.charAt(0)))
+                            .setColumn(Character.getNumericValue(strToSend.charAt(1)))
+                            .build();
+                    Response response;
+                    out = serverSock.getOutputStream();
+                    in = serverSock.getInputStream();
+
+                    op.writeDelimitedTo(out);
+
+                    // read from the server
+                    response = Response.parseDelimitedFrom(in);
+
+                    // print the server response.
+                    if(response.getResponseType()==Response.ResponseType.ERROR){              // in case there's an error
+                        System.out.println(response.getMessage());
+                    }else if(response.getResponseType()==Response.ResponseType.WON){
+                        System.out.println(response.getImage());
+                        System.out.println("You have WON the game!");
+                        /*if (response.getHit()){
+                            System.out.println("You hit a ship!");
+                        }else{
+                            System.out.println("You missed...");
+                        }
+                        System.out.println(response.getImage());
+                        System.out.println(response.getTask());*/
+                    }else{
+                        System.out.println(response.getImage());
+                        System.out.println(response.getTask());
+                        if (response.getHit()){
+                            System.out.println("You hit a ship!");
+                        }else{
+                            System.out.println("You missed...");
+                        }
                     }
                 }
             }

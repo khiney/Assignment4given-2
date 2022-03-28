@@ -2112,6 +2112,17 @@ public final class ResponseProtos {
      * @return The logins.
      */
     int getLogins();
+
+    /**
+     * <code>optional int32 points = 4;</code>
+     * @return Whether the points field is set.
+     */
+    boolean hasPoints();
+    /**
+     * <code>optional int32 points = 4;</code>
+     * @return The points.
+     */
+    int getPoints();
   }
   /**
    * <pre>
@@ -2178,6 +2189,11 @@ public final class ResponseProtos {
             case 24: {
               bitField0_ |= 0x00000004;
               logins_ = input.readInt32();
+              break;
+            }
+            case 32: {
+              bitField0_ |= 0x00000008;
+              points_ = input.readInt32();
               break;
             }
             default: {
@@ -2327,6 +2343,25 @@ public final class ResponseProtos {
       return logins_;
     }
 
+    public static final int POINTS_FIELD_NUMBER = 4;
+    private int points_;
+    /**
+     * <code>optional int32 points = 4;</code>
+     * @return Whether the points field is set.
+     */
+    @java.lang.Override
+    public boolean hasPoints() {
+      return ((bitField0_ & 0x00000008) != 0);
+    }
+    /**
+     * <code>optional int32 points = 4;</code>
+     * @return The points.
+     */
+    @java.lang.Override
+    public int getPoints() {
+      return points_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -2350,6 +2385,9 @@ public final class ResponseProtos {
       if (((bitField0_ & 0x00000004) != 0)) {
         output.writeInt32(3, logins_);
       }
+      if (((bitField0_ & 0x00000008) != 0)) {
+        output.writeInt32(4, points_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -2369,6 +2407,10 @@ public final class ResponseProtos {
       if (((bitField0_ & 0x00000004) != 0)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(3, logins_);
+      }
+      if (((bitField0_ & 0x00000008) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(4, points_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -2400,6 +2442,11 @@ public final class ResponseProtos {
         if (getLogins()
             != other.getLogins()) return false;
       }
+      if (hasPoints() != other.hasPoints()) return false;
+      if (hasPoints()) {
+        if (getPoints()
+            != other.getPoints()) return false;
+      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -2422,6 +2469,10 @@ public final class ResponseProtos {
       if (hasLogins()) {
         hash = (37 * hash) + LOGINS_FIELD_NUMBER;
         hash = (53 * hash) + getLogins();
+      }
+      if (hasPoints()) {
+        hash = (37 * hash) + POINTS_FIELD_NUMBER;
+        hash = (53 * hash) + getPoints();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -2566,6 +2617,8 @@ public final class ResponseProtos {
         bitField0_ = (bitField0_ & ~0x00000002);
         logins_ = 0;
         bitField0_ = (bitField0_ & ~0x00000004);
+        points_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
@@ -2605,6 +2658,10 @@ public final class ResponseProtos {
         if (((from_bitField0_ & 0x00000004) != 0)) {
           result.logins_ = logins_;
           to_bitField0_ |= 0x00000004;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.points_ = points_;
+          to_bitField0_ |= 0x00000008;
         }
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -2665,6 +2722,9 @@ public final class ResponseProtos {
         }
         if (other.hasLogins()) {
           setLogins(other.getLogins());
+        }
+        if (other.hasPoints()) {
+          setPoints(other.getPoints());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -2913,6 +2973,45 @@ public final class ResponseProtos {
         onChanged();
         return this;
       }
+
+      private int points_ ;
+      /**
+       * <code>optional int32 points = 4;</code>
+       * @return Whether the points field is set.
+       */
+      @java.lang.Override
+      public boolean hasPoints() {
+        return ((bitField0_ & 0x00000008) != 0);
+      }
+      /**
+       * <code>optional int32 points = 4;</code>
+       * @return The points.
+       */
+      @java.lang.Override
+      public int getPoints() {
+        return points_;
+      }
+      /**
+       * <code>optional int32 points = 4;</code>
+       * @param value The points to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPoints(int value) {
+        bitField0_ |= 0x00000008;
+        points_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 points = 4;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPoints() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        points_ = 0;
+        onChanged();
+        return this;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -2992,8 +3091,9 @@ public final class ResponseProtos {
       "age\030\005 \001(\t\022\013\n\003hit\030\006 \001(\010\022\017\n\007message\030\007 \001(\t\"" +
       "O\n\014ResponseType\022\014\n\010GREETING\020\000\022\n\n\006LEADER\020" +
       "\001\022\010\n\004TASK\020\002\022\007\n\003WON\020\003\022\t\n\005ERROR\020\004\022\007\n\003BYE\020\005" +
-      "\"3\n\005Entry\022\014\n\004name\030\001 \001(\t\022\014\n\004wins\030\002 \001(\005\022\016\n" +
-      "\006logins\030\003 \001(\005B\031\n\007buffersB\016ResponseProtos"
+      "\"C\n\005Entry\022\014\n\004name\030\001 \001(\t\022\014\n\004wins\030\002 \001(\005\022\016\n" +
+      "\006logins\030\003 \001(\005\022\016\n\006points\030\004 \001(\005B\031\n\007buffers" +
+      "B\016ResponseProtos"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -3010,7 +3110,7 @@ public final class ResponseProtos {
     internal_static_operation_Entry_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_operation_Entry_descriptor,
-        new java.lang.String[] { "Name", "Wins", "Logins", });
+        new java.lang.String[] { "Name", "Wins", "Logins", "Points", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

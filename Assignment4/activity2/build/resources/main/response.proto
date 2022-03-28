@@ -36,4 +36,5 @@ message Entry {
 	optional string name = 1;         // name of user
 	optional int32 wins = 2;          // how many wins
 	optional int32 logins = 3;        // how many logins
+    optional int32 points = 4;
 }

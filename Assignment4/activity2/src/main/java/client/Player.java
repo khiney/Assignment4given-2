@@ -14,15 +14,26 @@ public class Player implements Comparable<Player> {
 
     private int wins;
     private String name;
+    private int points;
 
     // constructor, getters, setters
     public Player(String name, int wins){
       this.wins = wins;
       this.name = name;
+      this.points = 0;
     }
+
 
     public int getWins(){
       return wins;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
 
     // override equals and hashCode

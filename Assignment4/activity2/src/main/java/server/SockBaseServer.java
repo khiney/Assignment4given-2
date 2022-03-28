@@ -21,6 +21,9 @@ class SockBaseServer {
     Socket clientSocket = null;
     int port = 9099; // default port
     Game game;
+    int oldIDX = 0;
+    int hits;
+    boolean gameInProgress = false;
 
 
     public SockBaseServer(Socket sock, Game game){
@@ -39,6 +42,8 @@ class SockBaseServer {
     // you can use this server as based or start a new one if you prefer. 
     public void start() throws IOException {
         String name = "";
+        Response.Builder res = Response.newBuilder()
+                .setResponseType(Response.ResponseType.LEADER);
 
 
         System.out.println("Ready...");
@@ -62,19 +67,70 @@ class SockBaseServer {
                             .setMessage("Hello " + name + " and welcome. Welcome to a simple game of battleship. ")
                             .build();
                     response.writeDelimitedTo(out);
+
+                    /*Entry leader = Entry.newBuilder()
+                            .setName("name")
+                            .setWins(0)
+                            .setLogins(0)
+                            .setPoints(0)
+                            .build();
+                    res.addLeader(leader);*/  /////////////////////////// ADD TO LEADER BOARD
                 } else if(op.getOperationType() == Request.OperationType.LEADER){
 
                 }else if(op.getOperationType() == Request.OperationType.NEW){
-                    game.newGame();
+                    if (!gameInProgress){
+                        game.newGame();
+                        oldIDX = game.getIdx();
+                        hits = 0;
+                        gameInProgress = true;
+                    }
                     Response response = Response.newBuilder()
                             .setResponseType(Response.ResponseType.TASK)
                             .setImage(game.getImage())
-                            .setTask("Select a row and column.")
+                            .setTask("Select a row and column. (enter two ints. ex: 01 for row=0 and column=1)")
                             .build();
                     response.writeDelimitedTo(out);
                 }else if(op.getOperationType() == Request.OperationType.ROWCOL){
-
+                    if((op.getRow()>=0&&op.getRow()<7) || (op.getColumn()>=0 && op.getColumn()<7)){
+                        game.replaceOneCharacter(op.getRow(), op.getColumn());
+                        if(oldIDX != game.getIdx()){
+                            if(game.getIdx()==12){
+                                Response response = Response.newBuilder()
+                                        .setResponseType(Response.ResponseType.WON)
+                                        .setImage(game.getImage())
+                                        .build();
+                                response.writeDelimitedTo(out);
+                            }else{
+                                oldIDX = game.getIdx();
+                                Response response = Response.newBuilder()
+                                        .setResponseType(Response.ResponseType.TASK)
+                                        .setImage(game.getImage())
+                                        .setTask("Select a row and column. (enter two ints. ex: 01 for row=0 and column=1)")
+                                        .setHit(true)
+                                        .build();
+                                response.writeDelimitedTo(out);
+                            }
+                        }else{
+                            Response response = Response.newBuilder()
+                                    .setResponseType(Response.ResponseType.TASK)
+                                    .setImage(game.getImage())
+                                    .setTask("Select a row and column. (enter two ints. ex: 01 for row=0 and column=1)")
+                                    .setHit(false)
+                                    .build();
+                            response.writeDelimitedTo(out);
+                        }
+                    }else{
+                        Response response = Response.newBuilder()
+                                .setResponseType(Response.ResponseType.ERROR)
+                                .setMessage("Enter an integer from 0 to 6 for row and column.")
+                                .build();
+                        response.writeDelimitedTo(out);
+                    }
                 }else if(op.getOperationType() == Request.OperationType.QUIT){
+                    Response response = Response.newBuilder()
+                            .setResponseType(Response.ResponseType.BYE)
+                            .setMessage("Thanks for playing BattleShip! Goodbye...")
+                            .build();
                     break;
                 }else{
                     Response response = Response.newBuilder()
@@ -91,7 +147,7 @@ class SockBaseServer {
                 //////////////////game.newGame(); // starting a new game//////////////////////////////////////
 
                 // adding the String of the game to
-                Response response2 = Response.newBuilder()
+                /*Response response2 = Response.newBuilder()
                         .setResponseType(Response.ResponseType.TASK)
                         .setImage(game.getImage())
                         .setTask("Select a row and column.")
@@ -130,7 +186,7 @@ class SockBaseServer {
                 // iterating through the current leaderboard and showing the entries
                 for (Entry lead : response3.getLeaderList()) {
                     System.out.println(lead.getName() + ": " + lead.getWins());
-                }
+                }*/
             }
 
         } catch (Exception ex) {
