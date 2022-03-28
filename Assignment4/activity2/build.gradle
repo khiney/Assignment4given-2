@@ -38,7 +38,7 @@ task arguments {
 task runClient(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
   description = "Run Client"
-  main = 'src.main.java.client.SockBaseClient'
+  main = 'activity2.src.main.java.client.SockBaseClient'
   standardInput = System.in
   // default args
   args host 
@@ -49,7 +49,7 @@ task runClient(type: JavaExec) {
 task runServer(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
   description = "Run Server"
-  main = 'src.main.java.server.SockBaseServer'
+  main = 'activity2.src.main.java.server.SockBaseServer'
   // default args
   args port
   args '1000' // sleep delay will always be this

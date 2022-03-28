@@ -20,6 +20,8 @@ class SockBaseClient {
         InputStream in = null;
         int i1=0, i2=0;
         int port = 9099; // default port
+        boolean greet = true;
+        boolean userChoice = false;
 
         // Make sure two arguments are given
         if (args.length != 2) {
@@ -35,33 +37,89 @@ class SockBaseClient {
         }
 
         // Ask user for username
-        System.out.println("Please provide your name for the server.");
-        BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
-        String strToSend = stdin.readLine();
 
-        // Build the first request object just including the name
-        Request op = Request.newBuilder()
-                .setOperationType(Request.OperationType.NAME)
-                .setName(strToSend).build();
-        Response response;
         try {
+            System.out.println("Please provide your name for the server.");
             // connect to the server
             serverSock = new Socket(host, port);
+            while (true) {
 
-            // write to the server
-            out = serverSock.getOutputStream();
-            in = serverSock.getInputStream();
+                BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
+                String strToSend = stdin.readLine();
+                if(greet) {
+                    // Build the first request object just including the name
+                    Request op = Request.newBuilder()
+                            .setOperationType(Request.OperationType.NAME)
+                            .setName(strToSend).build();
+                    Response response;
 
-            op.writeDelimitedTo(out);
+                    // write to the server
+                    out = serverSock.getOutputStream();
+                    in = serverSock.getInputStream();
 
-            // read from the server
-            response = Response.parseDelimitedFrom(in);
+                    op.writeDelimitedTo(out);
 
-            // print the server response. 
-            System.out.println(response.getMessage());
+                    // read from the server
+                    response = Response.parseDelimitedFrom(in);
 
-            System.out.println("* \nWhat would you like to do? \n 1 - to see the leader board \n 2 - to enter a game \n 3 - quit the game");
+                    // print the server response.
+                    System.out.println(response.getMessage());
 
+                    System.out.println("* \nWhat would you like to do? \n 1 - to see the leader board \n " +
+                            "2 - to enter a game \n 3 - quit the game");
+                    greet = false;
+                    userChoice=true;
+                }else if(userChoice){
+                    if(strToSend.equalsIgnoreCase("1")){
+                        Request op = Request.newBuilder()
+                                .setOperationType(Request.OperationType.LEADER)
+                                .setName(strToSend).build();
+                        Response response;
+                        out = serverSock.getOutputStream();
+                        in = serverSock.getInputStream();
+
+                        op.writeDelimitedTo(out);
+
+                        // read from the server
+                        response = Response.parseDelimitedFrom(in);
+
+                        // print the server response.
+                        System.out.println(response.getMessage());
+                    }else if(strToSend.equalsIgnoreCase("2")){
+                        Request op = Request.newBuilder()
+                                .setOperationType(Request.OperationType.NEW)
+                                .setName(strToSend).build();
+                        Response response;
+                        out = serverSock.getOutputStream();
+                        in = serverSock.getInputStream();
+
+                        op.writeDelimitedTo(out);
+
+                        // read from the server
+                        response = Response.parseDelimitedFrom(in);
+
+                        // print the server response.
+                        System.out.println(response.getImage());
+                        System.out.println(response.getTask());
+                    }else if(strToSend.equalsIgnoreCase("3")){
+                        Request op = Request.newBuilder()
+                                .setOperationType(Request.OperationType.QUIT)
+                                .setName(strToSend).build();
+                        Response response;
+                        out = serverSock.getOutputStream();
+                        in = serverSock.getInputStream();
+
+                        op.writeDelimitedTo(out);
+
+                        // read from the server
+                        response = Response.parseDelimitedFrom(in);
+
+                        // print the server response.
+                        System.out.println(response.getImage());
+                        System.out.println(response.getTask());
+                    }
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
