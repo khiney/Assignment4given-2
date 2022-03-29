@@ -25,4 +25,10 @@ class StringList {
     public String toString() {
         return strings.toString();
     }
+
+    public void display(){
+        for(String list:strings){
+            System.out.println(list);
+        }
+    }
 }

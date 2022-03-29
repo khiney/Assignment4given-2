@@ -46,6 +46,7 @@ class Performer {
         return json;
     }
 
+
     public void doPerform() {
         boolean quit = false;
         OutputStream out = null;
@@ -73,8 +74,8 @@ class Performer {
                             returnMessage = add(inStr);
                             break;*/
                         case (3):
-                            /*String inStr = (String) message.get("data");
-                            returnMessage = add(inStr);
+                            /*String disStr = (String) message.get("data");
+                            state.display();
                             break;*/
                         case (4):
                             /*String inStr = (String) message.get("data");

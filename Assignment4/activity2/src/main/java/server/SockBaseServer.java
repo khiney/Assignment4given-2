@@ -12,7 +12,7 @@ import buffers.RequestProtos.Message;
 import buffers.ResponseProtos.Response;
 import buffers.ResponseProtos.Entry;
 
-class SockBaseServer {
+class SockBaseServer implements Runnable {
     static String logFilename = "logs.txt";
 
     ServerSocket serv = null;
@@ -28,7 +28,7 @@ class SockBaseServer {
             .setResponseType(Response.ResponseType.LEADER);
 
 
-    public SockBaseServer(Socket sock, Game game){
+    public SockBaseServer(Socket sock, Game game, int id){
         this.clientSocket = sock;
         this.game = game;
         try {
@@ -41,10 +41,11 @@ class SockBaseServer {
 
     // Handles the communication right now it just accepts one input and then is done you should make sure the server stays open
     // can handle multiple requests and does not crash when the server crashes
-    // you can use this server as based or start a new one if you prefer. 
-    public void start() throws IOException {
+    // you can use this server as based or start a new one if you prefer.
+
+    public void start() throws IOException{
         String name = "";
-        Entry leader;
+        Entry leader = null;
 
 
         System.out.println("Ready...");
@@ -52,7 +53,7 @@ class SockBaseServer {
             while(true) {
                 // read the proto object and put into new objct
                 Request op = Request.parseDelimitedFrom(in);
-                String result = null;
+                String result;
 
 
                 // if the operation is NAME (so the beginning then say there is a commention and greet the client)
@@ -94,21 +95,22 @@ class SockBaseServer {
                     response.writeDelimitedTo(out);
                 }else if(op.getOperationType() == Request.OperationType.ROWCOL){
                     if((op.getRow()>=0&&op.getRow()<7) || (op.getColumn()>=0 && op.getColumn()<7)){
-                        game.replaceOneCharacter(op.getRow(), op.getColumn());
+                        String gameUpdate = game.replaceOneCharacter(op.getRow(), op.getColumn());
                         if(oldIDX != game.getIdx()){
                             if(game.getIdx()==12){
-                                leader.toBuilder().
+                                //leader.toBuilder().setPoints(leader.getPoints()+1+ game.getIdx());
                                 writeToLog(name, Message.WIN);
                                 Response response = Response.newBuilder()
                                         .setResponseType(Response.ResponseType.WON)
-                                        .setImage(game.getImage())
+                                        .setImage(gameUpdate)
                                         .build();
                                 response.writeDelimitedTo(out);
+                                gameInProgress = false;
                             }else{
                                 oldIDX = game.getIdx();
                                 Response response = Response.newBuilder()
                                         .setResponseType(Response.ResponseType.TASK)
-                                        .setImage(game.getImage())
+                                        .setImage(gameUpdate)
                                         .setTask("Select a row and column. (enter two ints. ex: 01 for row=0 and column=1)")
                                         .setHit(true)
                                         .build();
@@ -287,9 +289,18 @@ class SockBaseServer {
         }
 
         clientSocket = serv.accept();
-        SockBaseServer server = new SockBaseServer(clientSocket, game);
-        server.start();
+        Runnable server = new SockBaseServer(clientSocket, game);
+        server.run();
 
+    }
+
+    @Override
+    public void run(){
+        try {
+            this.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static synchronized void addLeaders(Entry l){

@@ -26,6 +26,21 @@ task runServer(type: JavaExec) {
   }
 }
 
+task runTask1(type: JavaExec) {
+  group 'server'
+  description 'Creates Server socket waits for messages'
+
+  classpath = sourceSets.main.runtimeClasspath
+
+  main = 'src.main.java.taskone.Server'
+  standardInput = System.in
+
+  // run with arguments e.g.: gradle runServer -Pport=9099 -q --console=plain
+  if (project.hasProperty('port')) {
+    args(project.getProperty('port'));
+  }
+}
+
 task runTask2(type: JavaExec) {
   group 'server'
   description 'Creates Server socket waits for messages'
@@ -38,6 +53,21 @@ task runTask2(type: JavaExec) {
   // run with arguments e.g.: gradle runServer -Pport=9099 -q --console=plain
   if (project.hasProperty('port')) {
     args(project.getProperty('port'));
+  }
+}
+
+task runTask3(type: JavaExec) {
+  group 'server'
+  description 'Creates Server socket waits for messages'
+
+  classpath = sourceSets.main.runtimeClasspath
+
+  main = 'src.main.java.taskone.ThreadPoolServer'
+  standardInput = System.in
+
+  // run with arguments e.g.: gradle runServer -Pport=9099 -q --console=plain
+  if (project.hasProperty('port') && project.hasProperty('tnum')) {
+    args(project.getProperty('port'), project.getProperty('tnum'));
   }
 }
 
