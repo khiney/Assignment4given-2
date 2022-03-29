@@ -47,7 +47,25 @@ class SockBaseClient {
 
                 BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
                 String strToSend = stdin.readLine();
-                if(greet) {
+                if(strToSend.equalsIgnoreCase("quit")){
+                    Request op = Request.newBuilder()
+                            .setOperationType(Request.OperationType.QUIT)
+                            .build();
+                    Response response;
+
+                    // write to the server
+                    out = serverSock.getOutputStream();
+                    in = serverSock.getInputStream();
+
+                    op.writeDelimitedTo(out);
+
+                    // read from the server
+                    response = Response.parseDelimitedFrom(in);
+
+                    // print the server response.
+                    System.out.println(response.getMessage());
+                    break;
+                }else if(greet) {
                     // Build the first request object just including the name
                     Request op = Request.newBuilder()
                             .setOperationType(Request.OperationType.NAME)
@@ -148,6 +166,10 @@ class SockBaseClient {
                     }else if(response.getResponseType()==Response.ResponseType.WON){
                         System.out.println(response.getImage());
                         System.out.println("You have WON the game!");
+                        System.out.println("* \nWhat would you like to do? \n 1 - to see the leader board \n " +
+                                "2 - to enter a game \n 3 - quit the game");
+                        playGame = false;
+                        userChoice = true;
                         /*if (response.getHit()){
                             System.out.println("You hit a ship!");
                         }else{

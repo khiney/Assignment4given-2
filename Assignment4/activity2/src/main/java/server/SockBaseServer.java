@@ -21,9 +21,11 @@ class SockBaseServer {
     Socket clientSocket = null;
     int port = 9099; // default port
     Game game;
-    int oldIDX = 0;
-    int hits;
-    boolean gameInProgress = false;
+    static int oldIDX = 0;
+    static int hits;
+    static boolean gameInProgress = false;
+    static Response.Builder res = Response.newBuilder()
+            .setResponseType(Response.ResponseType.LEADER);
 
 
     public SockBaseServer(Socket sock, Game game){
@@ -42,8 +44,7 @@ class SockBaseServer {
     // you can use this server as based or start a new one if you prefer. 
     public void start() throws IOException {
         String name = "";
-        Response.Builder res = Response.newBuilder()
-                .setResponseType(Response.ResponseType.LEADER);
+        Entry leader;
 
 
         System.out.println("Ready...");
@@ -68,13 +69,13 @@ class SockBaseServer {
                             .build();
                     response.writeDelimitedTo(out);
 
-                    /*Entry leader = Entry.newBuilder()
+                    leader = Entry.newBuilder()
                             .setName("name")
                             .setWins(0)
                             .setLogins(0)
                             .setPoints(0)
                             .build();
-                    res.addLeader(leader);*/  /////////////////////////// ADD TO LEADER BOARD
+                    //res.addLeader(leader);  /////////////////////////// ADD TO LEADER BOARD
                 } else if(op.getOperationType() == Request.OperationType.LEADER){
 
                 }else if(op.getOperationType() == Request.OperationType.NEW){
@@ -84,6 +85,7 @@ class SockBaseServer {
                         hits = 0;
                         gameInProgress = true;
                     }
+                    writeToLog(name, Message.START);
                     Response response = Response.newBuilder()
                             .setResponseType(Response.ResponseType.TASK)
                             .setImage(game.getImage())
@@ -95,6 +97,8 @@ class SockBaseServer {
                         game.replaceOneCharacter(op.getRow(), op.getColumn());
                         if(oldIDX != game.getIdx()){
                             if(game.getIdx()==12){
+                                leader.toBuilder().
+                                writeToLog(name, Message.WIN);
                                 Response response = Response.newBuilder()
                                         .setResponseType(Response.ResponseType.WON)
                                         .setImage(game.getImage())
@@ -127,10 +131,12 @@ class SockBaseServer {
                         response.writeDelimitedTo(out);
                     }
                 }else if(op.getOperationType() == Request.OperationType.QUIT){
+                    //writeToLog(name, Message.);
                     Response response = Response.newBuilder()
                             .setResponseType(Response.ResponseType.BYE)
                             .setMessage("Thanks for playing BattleShip! Goodbye...")
                             .build();
+                    response.writeDelimitedTo(out);
                     break;
                 }else{
                     Response response = Response.newBuilder()
@@ -284,6 +290,17 @@ class SockBaseServer {
         SockBaseServer server = new SockBaseServer(clientSocket, game);
         server.start();
 
+    }
+
+    public static synchronized void addLeaders(Entry l){
+        res.addLeader(l);
+    }
+    public static synchronized String getLeaders(){
+        StringBuilder leaderBoard = new StringBuilder();
+        for (Entry lead : res.getLeaderList()) {
+            leaderBoard.append(lead.getName()).append(" ").append(lead.getPoints()).append("\n");
+        }
+        return leaderBoard.toString();
     }
 }
 
